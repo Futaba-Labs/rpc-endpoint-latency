@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^22.5.4",
+    "command-line-args": "^6.0.0",
     "typescript": "^5.5.4",
     "viem": "^2.21.3"
   }

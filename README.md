@@ -1,5 +1,7 @@
 # rpc-endpoint-latency
 
+To measure the performance of the rpc endpoint, this repository measures the latency of getting the block timestamp and the actual block information.
+
 ## Install and Set configuration
 
 Run the following command;
@@ -34,4 +36,4 @@ pnpm run start -b <NUMBER_OF_BLOCKS> -i <POLLING_INTERVAL>
 - `-b`: number of blocks to measure
 - `-i`: frequency of polling (ms)
 
-When execution is complete, the result is displayed on the console and output in json format in output.
+When execution is complete, the result is displayed on the console and output in json format in `output`.

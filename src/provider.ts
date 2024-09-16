@@ -1,6 +1,6 @@
 import RPCs from "../rpc.json"
-import { createPublicClient, http, PublicClient } from "viem";
-import { mainnet } from "viem/chains";
+import { createPublicClient, http, PublicClient, webSocket } from "viem";
+import { holesky, mainnet } from "viem/chains";
 // @ts-ignore
 import commandLineArgs from 'command-line-args';
 import * as fs from 'fs';
@@ -21,20 +21,23 @@ type RPCLatency = {
 const clOptions = [
   { name: 'pollingInterval', alias: 'i', type: Number, defaultValue: 0 },
   { name: 'blocks', alias: 'b', type: Number, defaultValue: 10 },
+  { name: 'wss', alias: 'w', type: Boolean }
 ]
 
 const main = async () => {
   const options = commandLineArgs(clOptions);
-  console.log(`Config: { pollingInterval: ${options.pollingInterval}, blocks: ${options.blocks} }`);
+  console.log(`Config: { pollingInterval: ${options.pollingInterval}, blocks: ${options.blocks}, watch: ${options.watch} }`);
   const rpcs: RPC[] = [];
 
   // Create clients for each RPC
-  RPCs.forEach((rpc) => {
+  RPCs.provider.mainnet.forEach((rpc) => {
     console.log(`${rpc.name}: ${rpc.rpcUrl}`);
 
     const client = createPublicClient({
-      chain: mainnet,
-      transport: http(rpc.rpcUrl),
+      chain: holesky,
+      pollingInterval: options.pollingInterval === 0 ? undefined : options.pollingInterval,
+      cacheTime: 10000,
+      transport: options.ws ? webSocket(rpc.wssUrl) : http(rpc.rpcUrl),
     });
 
     rpcs.push({ name: rpc.name, rpcUrl: rpc.rpcUrl, client });
@@ -49,7 +52,6 @@ const main = async () => {
     let currentBlock = Number(initialBlock)
     const unwatch = rpc.client.watchBlocks(
       {
-        pollingInterval: options.pollingInterval === 0 ? undefined : options.pollingInterval,
         blockTag: 'latest',
         onBlock: block => {
           if (currentBlock === Number(block.number)) {
@@ -57,7 +59,7 @@ const main = async () => {
           }
 
           const now = Date.now()
-          const latency = now - Number(block.timestamp) * 1000;
+          const latency = now - (Number(block.timestamp) * 1000 + 500);
           console.log(`[${rpc.name}] Current block: ${block.number}, Latency: ${latency}ms`);
           latencies.push({ rpcName: rpc.name, blockNumber: Number(block.number), latency: latency });
           currentBlock = Number(block.number)

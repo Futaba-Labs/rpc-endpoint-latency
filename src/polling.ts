@@ -5,6 +5,7 @@ import { mainnet } from "viem/chains";
 import commandLineArgs from 'command-line-args';
 import { PollingOption, RPC } from "./type";
 import { measure } from "./measure";
+import { getChain } from "./util";
 
 
 const clOptions = [
@@ -29,7 +30,7 @@ const main = async () => {
     console.log(`${name}: ${rpc.rpcUrl}`);
 
     const client = createPublicClient({
-      chain: mainnet,
+      chain: getChain(options.chain),
       pollingInterval: rpc.interval,
       cacheTime: 10000,
       transport: http(rpc.rpcUrl),

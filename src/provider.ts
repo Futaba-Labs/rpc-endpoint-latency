@@ -5,6 +5,7 @@ import { mainnet } from "viem/chains";
 import commandLineArgs from 'command-line-args';
 import { ProviderOption, RPC } from "./type";
 import { measure } from "./measure";
+import { getChain } from "./util";
 
 const clOptions = [
   { name: 'pollingInterval', alias: 'i', type: Number, defaultValue: 0 },
@@ -27,12 +28,12 @@ const main = async () => {
   const rpcs: RPC[] = [];
 
   // Create clients for each RPC
-  RPCs.provider.mainnet.forEach((rpc) => {
+  RPCs.provider[options.chain as keyof typeof RPCs.provider].forEach((rpc) => {
     const name = `${options.chain}-${rpc.name}`
     console.log(`${name}: ${rpc.rpcUrl}`);
 
     const client = createPublicClient({
-      chain: mainnet,
+      chain: getChain(options.chain),
       pollingInterval: options.pollingInterval === 0 ? undefined : options.pollingInterval,
       cacheTime: 10000,
       transport: options.ws ? webSocket(rpc.wssUrl) : http(rpc.rpcUrl),

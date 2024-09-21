@@ -11,7 +11,7 @@ export const measure = async (rpcs: RPC[], options: ProviderOption | PollingOpti
     let currentBlock = Number(initialBlock)
     const unwatch = rpc.client.watchBlocks(
       {
-        blockTag: 'latest',
+        blockTag: 'pending',
         onBlock: block => {
           if (currentBlock === Number(block.number)) {
             return

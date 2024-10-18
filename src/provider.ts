@@ -16,7 +16,7 @@ const clOptions = [
 
 const main = async () => {
   const options = commandLineArgs(clOptions);
-  console.log(`Config: { pollingInterval: ${options.pollingInterval}, blocks: ${options.blocks}, watch: ${options.watch} }`);
+  console.log(`Config: { pollingInterval: ${options.pollingInterval}, blocks: ${options.blocks}, websocket: ${options.wss} }`);
 
   const providerOption: ProviderOption = {
     pollingInterval: options.pollingInterval,
@@ -30,16 +30,17 @@ const main = async () => {
   // Create clients for each RPC
   RPCs.provider[options.chain as keyof typeof RPCs.provider].forEach((rpc) => {
     const name = `${options.chain}-${rpc.name}`
-    console.log(`${name}: ${rpc.rpcUrl}`);
+    const url = options.wss ? rpc.wssUrl : rpc.rpcUrl;
+    console.log(`${name}: ${url}`);
 
     const client = createPublicClient({
       chain: getChain(options.chain),
       pollingInterval: options.pollingInterval === 0 ? undefined : options.pollingInterval,
       cacheTime: 10000,
-      transport: options.ws ? webSocket(rpc.wssUrl) : http(rpc.rpcUrl),
+      transport: options.wss ? webSocket(url) : http(url),
     });
 
-    rpcs.push({ name, rpcUrl: rpc.rpcUrl, client });
+    rpcs.push({ name, rpcUrl: url, client });
   });
 
   await measure(rpcs, providerOption);

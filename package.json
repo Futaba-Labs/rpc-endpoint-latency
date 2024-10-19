@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start:provider": "pnpm run build && node dist/provider.js",
-    "start:polling": "pnpm run build && node dist/polling.js"
+    "start:polling": "pnpm run build && node dist/polling.js",
+    "start:websocket": "pnpm run build && node dist/websocket.js"
   },
   "keywords": [],
   "author": "",

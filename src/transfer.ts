@@ -120,7 +120,7 @@ const transfer = async (rpc: RPCWithWallet, serializedTransaction: `0x${string}`
   const beforeTransfer = performance.now()
   const hash = await rpc.walletClient.sendRawTransaction({ serializedTransaction })
   const afterTransfer = performance.now()
-  const latency = afterTransfer - beforeTransfer
+  const latency = Math.round(afterTransfer - beforeTransfer)
 
   const transaction = await rpc.client.waitForTransactionReceipt({ hash });
   if (transaction.status !== 'success') {

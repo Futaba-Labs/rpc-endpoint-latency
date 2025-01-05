@@ -55,21 +55,33 @@ const main = async () => {
 
   console.log(`RPC: ${JSON.stringify(rpcs.map(rpc => ({ name: rpc.name, rpcUrl: rpc.rpcUrl, account: rpc.walletClient.account!.address })), null, 2)}`)
   
-  const latencies: TransferLatency[] = []
+
+  const latencies = await (async () => {
+    const promises = []
+    const latencies: TransferLatency[] = []
+
   for (let i = 0; i < options.iteration; i++) {
     console.log(`Iteration ${i + 1}`)
-    const promises = []
+    const pros = []
+
     for (const rpc of rpcs) {
-      promises.push(await transfer(rpc, options))
+      pros.push(prepareTransfer(rpc, options))
     }
+    const serializedTransactions = await Promise.all(pros)
+    for (const serializedTransaction of serializedTransactions) {
+      promises.push(transfer(serializedTransaction.rpc, serializedTransaction.serializedTransaction))
+    }
+
     const results = await Promise.all(promises)
-    
     for (const result of results) {
       if (result) {
-        latencies.push(result)
+          latencies.push(result)
+        }
       }
     }
-  }
+    return latencies.filter((l, i, self) => self.findIndex(t => t.txHash === l.txHash) === i)
+  })()
+
 
   for (const rpc of rpcs) {
     const filteredLatencies = latencies.filter(latency => latency.rpcName === rpc.name);
@@ -89,21 +101,24 @@ const main = async () => {
   }
 };
 
-const transfer = async (rpc: RPCWithWallet, options: ProviderOption): Promise<TransferLatency | null> => {
-  const request = await rpc.walletClient.prepareTransactionRequest({
-    to: rpc.walletClient.account!.address,
-    value: parseEther('0.000001'),
-    chain: getChain(options.chain),
-  })
+const prepareTransfer = async (rpc: RPCWithWallet, options: ProviderOption)=> {
+    const request = await rpc.walletClient.prepareTransactionRequest({
+        to: rpc.walletClient.account!.address,
+        value: parseEther('0.000001'),
+        chain: getChain(options.chain),
+      })
+    
+      const serializedTransaction = await rpc.walletClient.signTransaction({
+        ...request,
+        account: rpc.walletClient.account!,
+      })
+      return { rpc, serializedTransaction }
+}
 
-  const serializedTransaction = await rpc.walletClient.signTransaction({
-    ...request,
-    account: rpc.walletClient.account!,
-  })    
-
-  const beforeTransfer = Date.now()
+const transfer = async (rpc: RPCWithWallet, serializedTransaction: `0x${string}`): Promise<TransferLatency | null> => {
+  const beforeTransfer = performance.now()
   const hash = await rpc.walletClient.sendRawTransaction({ serializedTransaction })
-  const afterTransfer = Date.now()
+  const afterTransfer = performance.now()
   const latency = afterTransfer - beforeTransfer
 
   const transaction = await rpc.client.waitForTransactionReceipt({ hash });

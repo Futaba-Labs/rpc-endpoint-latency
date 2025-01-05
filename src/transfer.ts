@@ -5,7 +5,7 @@ import { mainnet } from "viem/chains";
 import commandLineArgs from 'command-line-args';
 import { PollingOption, ProviderOption, RPC, RPCWithWallet, TransferLatency } from "./type";
 import { measure } from "./measure";
-import { getChain } from "./util";
+import { getChain, sleep } from "./util";
 import { privateKeyToAccount } from "viem/accounts";
 
 import dotenv from 'dotenv';
@@ -78,6 +78,7 @@ const main = async () => {
           latencies.push(result)
         }
       }
+      await sleep(1000)
     }
     return latencies.filter((l, i, self) => self.findIndex(t => t.txHash === l.txHash) === i)
   })()

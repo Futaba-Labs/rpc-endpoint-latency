@@ -24,3 +24,5 @@ export const getChain = (chain: string): Chain => {
       throw new Error(`Unsupported chain: ${chain}`)
   }
 }
+
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

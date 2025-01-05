@@ -8,7 +8,8 @@
     "build": "tsc",
     "start:provider": "pnpm run build && node dist/provider.js",
     "start:polling": "pnpm run build && node dist/polling.js",
-    "start:websocket": "pnpm run build && node dist/websocket.js"
+    "start:websocket": "pnpm run build && node dist/websocket.js",
+    "start:transfer": "pnpm run build && node dist/transfer.js"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +19,8 @@
     "command-line-args": "^6.0.0",
     "typescript": "^5.5.4",
     "viem": "^2.21.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }

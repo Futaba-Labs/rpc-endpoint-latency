@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
     devDependencies:
       '@types/node':
         specifier: ^22.5.4
@@ -67,6 +71,10 @@ packages:
   command-line-args@6.0.0:
     resolution: {integrity: sha512-zDdHxHzlCp/gA1gy0VtPK3YL0Aob3ijJdwZ7H3HSl55hh8EziLtRlyj/od8EGRJfX8IjussC/mQkScl2Ms5Suw==}
     engines: {node: '>=12.20'}
+
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
 
   find-replace@5.0.1:
     resolution: {integrity: sha512-o5/Y8HrCNRuFF5rdNTkX8Vhv6kTFTV0t1zIoigwlCdbkA9qaapRzxvWPND2VvlFa9LBI05Q1i8ml/saMqkOJUQ==}
@@ -156,6 +164,8 @@ snapshots:
       find-replace: 5.0.1
       lodash.camelcase: 4.3.0
       typical: 7.1.1
+
+  dotenv@16.4.7: {}
 
   find-replace@5.0.1:
     dependencies:

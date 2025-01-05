@@ -1,10 +1,14 @@
-import { PublicClient } from "viem";
+import { PublicClient, WalletClient } from "viem";
 
-export type RPC = {
+export interface RPC {
   name: string;
   rpcUrl: string;
   client: PublicClient;
-};
+}
+
+export type RPCWithWallet = RPC & {
+  walletClient: WalletClient;
+}
 
 export type RPCLatency = {
   rpcName: string;
@@ -22,4 +26,11 @@ export type ProviderOption = {
 export type PollingOption = {
   blocks: number;
   chain: string;
+}
+
+export type TransferLatency = {
+  rpcName: string;
+  blockNumber: number;
+  txHash: string;
+  latency: number;
 }

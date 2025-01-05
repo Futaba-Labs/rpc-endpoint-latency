@@ -1,4 +1,4 @@
-import { arbitrum, base, blast, Chain, linea, mainnet, optimism, scroll, zksync } from "viem/chains"
+import { arbitrum, arbitrumSepolia, base, blast, Chain, linea, mainnet, optimism, scroll, zksync } from "viem/chains"
 
 export const getChain = (chain: string): Chain => {
   switch (chain) {
@@ -18,6 +18,8 @@ export const getChain = (chain: string): Chain => {
       return linea
     case 'zksync':
       return zksync
+    case 'arbitrum-sepolia':
+      return arbitrumSepolia
     default:
       throw new Error(`Unsupported chain: ${chain}`)
   }
